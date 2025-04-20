@@ -309,7 +309,7 @@ const AppContent = () => {
         )}
       </main>
       <footer className="bg-green-100 text-center p-4 text-sm text-gray-600">
-        © {new Date().getFullYear()} Agrofix. All rights reserved.
+        © {new Date().getFullYear()} Ashok chittari. All rights reserved.
       </footer>
     </div>
   );
