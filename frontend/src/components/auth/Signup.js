@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
 
-const Signup = ({ onSignup }) => {
+const Signup = () => {
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -29,14 +31,27 @@ const Signup = ({ onSignup }) => {
     setError('');
     setLoading(true);
 
+    // Validate form data
+    if (!formData.name || !formData.email || !formData.password || !formData.mobile) {
+      setError('All fields are required');
+      setLoading(false);
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       setLoading(false);
       return;
     }
 
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, {
+      const response = await axios.post('http://localhost:5000/api/auth/register', {
         name: formData.name,
         email: formData.email,
         password: formData.password,
@@ -45,8 +60,8 @@ const Signup = ({ onSignup }) => {
       });
 
       if (response.data.user && response.data.token) {
-        onSignup(response.data);
-        navigate('/');
+        await login(response.data.user, response.data.token);
+        navigate(formData.role === 'admin' ? '/admin' : '/');
       } else {
         throw new Error('Invalid response from server');
       }

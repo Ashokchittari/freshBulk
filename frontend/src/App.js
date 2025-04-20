@@ -131,9 +131,9 @@ const AppContent = () => {
     }
   };
 
-  const handleRemoveFromCart = async (itemId) => {
+  const handleRemoveFromCart = async (productId) => {
     try {
-      await axios.delete(`/api/cart/${itemId}`, {
+      await axios.delete(`/api/cart/${productId}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -164,7 +164,9 @@ const AppContent = () => {
           }
         }
       );
-      await fetchCartItems();
+      
+      // Clear the cart items from state
+      setCartItems([]);
       await fetchOrders();
       window.location.href = '/orders';
     } catch (err) {

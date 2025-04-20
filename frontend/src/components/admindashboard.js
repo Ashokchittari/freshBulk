@@ -33,15 +33,41 @@ const AdminDashboard = ({ orders, products, onStatusChange, onAddProduct, onUpda
   };
 
   const handleUpdateStock = async (productId, newStock) => {
+    if (!newStock || newStock < 0) return;
+    
     setLoading(true);
     setError('');
     try {
-      await onUpdateProduct(productId, { stock: newStock });
+      // Find the current product to get all required fields
+      const currentProduct = products.find(p => p.id === productId);
+      if (!currentProduct) {
+        throw new Error('Product not found');
+      }
+
+      // Update the product with all required fields
+      await onUpdateProduct(productId, {
+        name: currentProduct.name,
+        price: currentProduct.price,
+        stock: parseInt(newStock),
+        image_url: currentProduct.image_url
+      });
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleStockKeyPress = (e, productId) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleUpdateStock(productId, e.target.value);
+      e.target.value = '';
+    }
+  };
+
+  const handleStockBlur = (e, productId) => {
+    handleUpdateStock(productId, e.target.value);
   };
 
   const handleStatusChange = async (orderId, newStatus) => {
@@ -143,7 +169,9 @@ const AdminDashboard = ({ orders, products, onStatusChange, onAddProduct, onUpda
                     type="number"
                     placeholder="New stock quantity"
                     className="p-2 border rounded mr-2"
-                    onChange={(e) => handleUpdateStock(product.id, e.target.value)}
+                    onKeyPress={(e) => handleStockKeyPress(e, product.id)}
+                    onBlur={(e) => handleStockBlur(e, product.id)}
+                    min="0"
                   />
                 </div>
               </div>

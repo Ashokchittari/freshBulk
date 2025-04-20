@@ -15,7 +15,9 @@ const pool = new Pool({
 // Configure CORS
 app.use(cors({
   origin: ['http://localhost:3000', 'http://localhost:3002'],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 
@@ -313,6 +315,12 @@ app.post('/api/orders', authenticateToken, async (req, res) => {
         [item.quantity, item.id]
       );
     }
+
+    // Clear the cart after successful order placement
+    await client.query(
+      'DELETE FROM cart_items WHERE user_id = $1',
+      [req.user.id]
+    );
     
     await client.query('COMMIT');
     res.json(orderResult.rows[0]);

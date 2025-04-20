@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import MobileMenu from './MobileMenu';
 
 const Navbar = ({ cartCount }) => {
   const { user, logout } = useAuth();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     setShowLogoutDialog(true);
@@ -20,12 +22,18 @@ const Navbar = ({ cartCount }) => {
     setShowLogoutDialog(false);
   };
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
     <>
       <nav className="bg-green-600 text-white p-4">
         <div className="container mx-auto flex justify-between items-center">
           <Link to="/" className="text-2xl font-bold">Fresh Bulk</Link>
-          <div className="flex items-center space-x-6">
+          
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-6">
             {user ? (
               <>
                 {user.role === 'admin' ? (
@@ -51,11 +59,40 @@ const Navbar = ({ cartCount }) => {
               </>
             )}
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden text-white focus:outline-none"
+            onClick={toggleMobileMenu}
+            aria-label="Toggle menu"
+          >
+            <svg
+              className="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
         </div>
       </nav>
 
+      {/* Mobile Menu */}
+      <MobileMenu
+        isOpen={isMobileMenuOpen}
+        onClose={toggleMobileMenu}
+        cartCount={cartCount}
+      />
+
+      {/* Logout Dialog */}
       {showLogoutDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-xl">
             <h2 className="text-xl font-semibold mb-4">Confirm Logout</h2>
             <p className="mb-6">Are you sure you want to logout?</p>

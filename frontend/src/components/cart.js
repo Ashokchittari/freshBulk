@@ -193,7 +193,7 @@ const Cart = ({ cartItems, onQuantityChange, onRemoveItem, onCheckout }) => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <button
-                        onClick={() => handleRemove(item.id)}
+                        onClick={() => handleRemove(item.product_id)}
                         disabled={loading}
                         className="text-red-600 hover:text-red-900"
                       >
