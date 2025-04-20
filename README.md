@@ -107,7 +107,7 @@ npm start
 - Role: admin
 
 ### Buyer Account
-- Email: ashok@gmail.com
+- Email: ashok123@gmail.com
 - Password: ashok@123
 - Role: buyer
 
